@@ -36,15 +36,18 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
                   </tr>
                   <tr>
                     <th scope="row">2</th>
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
                   </tr>
                   <tr>
                     <th scope="row">3</th>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -72,24 +75,24 @@
                     <input class="form-control" id="monthlyRate-input" type="text">
                 </div>
                 <div>
-                    <a href="#" class="btn btn-primary">Submit</a>                
+                    <button class="btn btn-default" id="add-employee-btn" type="submit">Submit</button>                
                 </div>
             </form>
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
-        <script>
-          // Initialize Firebase
-          var config = {
-            apiKey: "AIzaSyBWSkz2PW2Ag8Kr4kTIw0mQQKsv5VB2Gog",
-            authDomain: "timesheet-1d21c.firebaseapp.com",
-            databaseURL: "https://timesheet-1d21c.firebaseio.com",
-            projectId: "timesheet-1d21c",
-            storageBucket: "",
-            messagingSenderId: "1080008239078"
-          };
-          firebase.initializeApp(config);
+        <script src="https://code.jquery.com/jquery.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
+<script>
+  var config = {
+    apiKey: "AIzaSyBWSkz2PW2Ag8Kr4kTIw0mQQKsv5VB2Gog",
+    authDomain: "timesheet-1d21c.firebaseapp.com",
+    databaseURL: "https://timesheet-1d21c.firebaseio.com",
+    projectId: "timesheet-1d21c",
+    storageBucket: "timesheet-1d21c.appspot.com",
+    messagingSenderId: "1080008239078"
+  };
+  firebase.initializeApp(config);
 
   
   var database = firebase.database();
@@ -97,45 +100,39 @@
   $("#add-employee-btn").on("click", function(event) {
     event.preventDefault();
 
-    var empName = $("#employee-name-input").val().trim();
-    var empRole = $("#role-input").val().trim();
-    var empStart = moment($("#start-input").val().trim(), "MM/DD/YYYY").format("X");
-    var empRate = $("#rate-input").val().trim();
+    var name = $("#name-input").val().trim();
+    var role = $("#role-input").val().trim();
+    var start = moment($("#startDate-input").val().trim(), "MM/DD/YYYY").format("X");
+    var rate = $("#monthlyRate-input").val().trim();
   
-    var newEmp = {
-      name: empName,
-      role: empRole,
-      start: empStart,
-      rate: empRate
-    };
-  
-    database.ref().push(newEmp);
+    datebase.ref().push({
+      name: name,
+      role: role,
+      start: start,
+      rate: rate,
+      dateAdded: firebase.database.ServerValue.TIMESTAMP
+    })
 
-    console.log(newEmp.name);
-    console.log(newEmp.role);
-    console.log(newEmp.start);
-    console.log(newEmp.rate);
-  
-    alert("Employee successfully added");
-
-    $("#employee-name-input").val("");
-    $("#role-input").val("");
-    $("#start-input").val("");
-    $("#rate-input").val("");
   });
   
   database.ref().on("child_added", function(childSnapshot) {
-    console.log(childSnapshot.val());
 
-    var empName = childSnapshot.val().name;
-    var empRole = childSnapshot.val().role;
-    var empStart = childSnapshot.val().start;
-    var empRate = childSnapshot.val().rate;
+    var sv = snapshot.val();
 
-    console.log(empName);
-    console.log(empRole);
-    console.log(empStart);
-    console.log(empRate);
+    console.log(sv.name);
+    console.log(sv.role);
+    console.log(sv.start);
+    console.log(sv.rate);
+  
+    alert("Employee successfully added");
+
+    $("#name-input").text(sv.name);
+    $("#role-input").text(sv.role);
+    $("#startDate-input").text(sv.start);
+    $("#monthlyRate-input").text(sv.rate);
+
+  }, function(errorObject) {
+    console.log("Errors handled: " + errorObject.code);
   });
         </script>
 </body>
